@@ -1,6 +1,16 @@
 # Overview
 
-This is a full-stack web application for a Unit Pelaksana Teknis Pembibitan dan Pembenihan (Technical Implementation Unit for Nursery and Seeding) that provides a dashboard interface for monitoring agricultural data. The application serves as a management system for tracking stock levels, production data, seed inventory, and distribution metrics, with real-time data visualization through charts and interactive components.
+This is a comprehensive full-stack web application for a Unit Pelaksana Teknis Pembibitan dan Pembenihan (Technical Implementation Unit for Nursery and Seeding). The application now features a complete website experience including:
+
+- **Hero Landing Page**: Attractive entrance with agricultural imagery and key statistics
+- **About Section**: Comprehensive information about the organization's vision, mission, and commitments
+- **Real-time Dashboard**: Monitoring agricultural data with live charts and statistics  
+- **Agrowisata Services**: Detailed agrotourism offerings with pricing and booking information
+- **Contact Information**: Complete contact details, location, and inquiry form
+- **Admin Configuration**: Advanced admin panel with configurable spreadsheet row mapping
+- **Responsive Design**: Mobile-friendly navigation and layouts
+
+The system integrates with Google Spreadsheet CSV exports for real-time data updates and provides a complete digital presence for the agricultural facility.
 
 # User Preferences
 
