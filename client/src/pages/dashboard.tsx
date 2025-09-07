@@ -21,9 +21,7 @@ export default function Dashboard() {
   } = useQuery<DashboardData>({
     queryKey: ['/api/dashboard/data'],
     refetchInterval: 30000, // 30 seconds polling
-    refetchOnWindowFocus: false,
-    onError: () => setIsOnline(false),
-    onSuccess: () => setIsOnline(true)
+    refetchOnWindowFocus: false
   });
 
   const emptyData: DashboardData = {
@@ -33,7 +31,7 @@ export default function Dashboard() {
     distribusiData: []
   };
 
-  const data = dashboardData || emptyData;
+  const data: DashboardData = dashboardData || emptyData;
 
   useEffect(() => {
     if (dashboardData) {
