@@ -1,7 +1,7 @@
 import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
-import { configurationUpdateSchema, rowConfigSchema, type DashboardData, type StokData, type ProduksiData, type BenihData, type DistribusiData, type RowConfiguration } from "@shared/schema";
+import { configurationUpdateSchema, rowConfigSchema, heroContentSchema, aboutContentSchema, servicesContentSchema, contactContentSchema, type DashboardData, type StokData, type ProduksiData, type BenihData, type DistribusiData, type RowConfiguration } from "@shared/schema";
 import { z } from "zod";
 
 export async function registerRoutes(app: Express): Promise<Server> {
@@ -219,6 +219,117 @@ export async function registerRoutes(app: Express): Promise<Server> {
         message: "Failed to fetch dashboard data",
         error: error instanceof Error ? error.message : "Unknown error"
       });
+    }
+  });
+
+  // Website content management endpoints
+  
+  // Get all website content
+  app.get("/api/admin/content", async (req, res) => {
+    try {
+      const allContent = await storage.getAllWebsiteContent();
+      const contentData: any = {};
+      
+      for (const content of allContent) {
+        try {
+          contentData[content.section] = JSON.parse(content.content);
+        } catch (parseError) {
+          console.error(`Failed to parse content for section ${content.section}:`, parseError);
+        }
+      }
+      
+      res.json(contentData);
+    } catch (error) {
+      res.status(500).json({ message: "Failed to get website content" });
+    }
+  });
+  
+  // Get content for specific section
+  app.get("/api/admin/content/:section", async (req, res) => {
+    try {
+      const { section } = req.params;
+      const content = await storage.getWebsiteContent(section);
+      
+      if (!content) {
+        return res.status(404).json({ message: "Content not found" });
+      }
+      
+      try {
+        const parsedContent = JSON.parse(content.content);
+        res.json(parsedContent);
+      } catch (parseError) {
+        res.status(500).json({ message: "Failed to parse content" });
+      }
+    } catch (error) {
+      res.status(500).json({ message: "Failed to get content" });
+    }
+  });
+  
+  // Update hero section content
+  app.post("/api/admin/content/hero", async (req, res) => {
+    try {
+      const validatedData = heroContentSchema.parse(req.body);
+      
+      await storage.updateWebsiteContent("hero", JSON.stringify(validatedData));
+      
+      res.json({ success: true, message: "Hero content updated successfully" });
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        res.status(400).json({ message: "Invalid content data", errors: error.errors });
+      } else {
+        res.status(500).json({ message: "Failed to update hero content" });
+      }
+    }
+  });
+  
+  // Update about section content
+  app.post("/api/admin/content/about", async (req, res) => {
+    try {
+      const validatedData = aboutContentSchema.parse(req.body);
+      
+      await storage.updateWebsiteContent("about", JSON.stringify(validatedData));
+      
+      res.json({ success: true, message: "About content updated successfully" });
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        res.status(400).json({ message: "Invalid content data", errors: error.errors });
+      } else {
+        res.status(500).json({ message: "Failed to update about content" });
+      }
+    }
+  });
+  
+  // Update services section content
+  app.post("/api/admin/content/services", async (req, res) => {
+    try {
+      const validatedData = servicesContentSchema.parse(req.body);
+      
+      await storage.updateWebsiteContent("services", JSON.stringify(validatedData));
+      
+      res.json({ success: true, message: "Services content updated successfully" });
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        res.status(400).json({ message: "Invalid content data", errors: error.errors });
+      } else {
+        res.status(500).json({ message: "Failed to update services content" });
+      }
+    }
+  });
+  
+  // Update contact section content
+  app.post("/api/admin/content/contact", async (req, res) => {
+    try {
+      const validatedData = contactContentSchema.parse(req.body);
+      
+      await storage.updateWebsiteContent("contact", JSON.stringify(validatedData));
+      
+      res.json({ success: true, message: "Contact content updated successfully" });
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        res.status(400).json({ message: "Invalid content data", errors: error.errors });
+      } else {
+        res.status(500).json({ message: "Failed to update contact content" });
+      }
     }
   });
 
