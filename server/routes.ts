@@ -1,7 +1,7 @@
 import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
-import { configurationUpdateSchema, type DashboardData, type StokData, type ProduksiData, type BenihData, type DistribusiData } from "@shared/schema";
+import { configurationUpdateSchema, rowConfigSchema, type DashboardData, type StokData, type ProduksiData, type BenihData, type DistribusiData, type RowConfiguration } from "@shared/schema";
 import { z } from "zod";
 
 export async function registerRoutes(app: Express): Promise<Server> {
@@ -27,10 +27,29 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const sheetUrl = await storage.getConfiguration("sheetUrl");
       const pollingInterval = await storage.getConfiguration("pollingInterval");
+      const rowConfig = await storage.getConfiguration("rowConfiguration");
+      
+      let rowConfiguration;
+      try {
+        rowConfiguration = rowConfig ? JSON.parse(rowConfig.value) : {
+          stokBibit: { startRow: 2, endRow: 5, label: "Stok Bibit" },
+          produksiHarian: { startRow: 6, endRow: 9, label: "Produksi Harian" },
+          benihTersedia: { startRow: 10, endRow: 13, label: "Benih Tersedia" },
+          distribusiBenih: { startRow: 14, endRow: 17, label: "Distribusi Benih" }
+        };
+      } catch (parseError) {
+        rowConfiguration = {
+          stokBibit: { startRow: 2, endRow: 5, label: "Stok Bibit" },
+          produksiHarian: { startRow: 6, endRow: 9, label: "Produksi Harian" },
+          benihTersedia: { startRow: 10, endRow: 13, label: "Benih Tersedia" },
+          distribusiBenih: { startRow: 14, endRow: 17, label: "Distribusi Benih" }
+        };
+      }
       
       res.json({
         sheetUrl: sheetUrl?.value || "",
-        pollingInterval: parseInt(pollingInterval?.value || "30000")
+        pollingInterval: parseInt(pollingInterval?.value || "30000"),
+        rowConfiguration
       });
     } catch (error) {
       res.status(500).json({ message: "Failed to get configuration" });
@@ -52,6 +71,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       if (validatedData.adminPassword) {
         await storage.updateConfiguration("adminPassword", validatedData.adminPassword);
+      }
+      
+      if (validatedData.rowConfiguration) {
+        await storage.updateConfiguration("rowConfiguration", JSON.stringify(validatedData.rowConfiguration));
       }
       
       res.json({ success: true, message: "Configuration updated successfully" });
@@ -109,6 +132,26 @@ export async function registerRoutes(app: Express): Promise<Server> {
         });
       }
 
+      // Get row configuration
+      const rowConfigData = await storage.getConfiguration("rowConfiguration");
+      let rowConfig: RowConfiguration;
+      
+      try {
+        rowConfig = rowConfigData ? JSON.parse(rowConfigData.value) : {
+          stokBibit: { startRow: 2, endRow: 5, label: "Stok Bibit" },
+          produksiHarian: { startRow: 6, endRow: 9, label: "Produksi Harian" },
+          benihTersedia: { startRow: 10, endRow: 13, label: "Benih Tersedia" },
+          distribusiBenih: { startRow: 14, endRow: 17, label: "Distribusi Benih" }
+        };
+      } catch (parseError) {
+        rowConfig = {
+          stokBibit: { startRow: 2, endRow: 5, label: "Stok Bibit" },
+          produksiHarian: { startRow: 6, endRow: 9, label: "Produksi Harian" },
+          benihTersedia: { startRow: 10, endRow: 13, label: "Benih Tersedia" },
+          distribusiBenih: { startRow: 14, endRow: 17, label: "Distribusi Benih" }
+        };
+      }
+
       const response = await fetch(sheetUrl);
       if (!response.ok) {
         throw new Error(`Failed to fetch spreadsheet data: ${response.statusText}`);
@@ -117,14 +160,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const csvText = await response.text();
       const rows = csvText.split('\n').map(row => row.split(','));
       
-      // Parse data according to the structure
+      // Parse data using dynamic row configuration
       const stokData: StokData[] = [];
       const produksiData: ProduksiData[] = [];
       const benihData: BenihData[] = [];
       const distribusiData: DistribusiData[] = [];
       
-      // Parse Stok Bibit (rows 1-4 in JS array, corresponding to spreadsheet rows 2-5)
-      for (let i = 1; i <= 4; i++) {
+      // Parse Stok Bibit using configured rows
+      for (let i = rowConfig.stokBibit.startRow - 1; i <= rowConfig.stokBibit.endRow - 1; i++) {
         if (rows[i] && rows[i][0] && rows[i][1]) {
           stokData.push({ 
             jenis: rows[i][0].trim(), 
@@ -133,8 +176,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
         }
       }
       
-      // Parse Produksi Harian (rows 5-8 in JS array, spreadsheet rows 6-9)
-      for (let i = 5; i <= 8; i++) {
+      // Parse Produksi Harian using configured rows
+      for (let i = rowConfig.produksiHarian.startRow - 1; i <= rowConfig.produksiHarian.endRow - 1; i++) {
         if (rows[i] && rows[i][0] && rows[i][1]) {
           produksiData.push({ 
             tanggal: rows[i][0].trim(), 
@@ -143,8 +186,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
         }
       }
       
-      // Parse Benih Tersedia (rows 9-12 in JS array, spreadsheet rows 10-13)
-      for (let i = 9; i <= 12; i++) {
+      // Parse Benih Tersedia using configured rows
+      for (let i = rowConfig.benihTersedia.startRow - 1; i <= rowConfig.benihTersedia.endRow - 1; i++) {
         if (rows[i] && rows[i][0] && rows[i][1]) {
           benihData.push({ 
             jenis: rows[i][0].trim(), 
@@ -153,8 +196,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
         }
       }
       
-      // Parse Distribusi Benih (rows 13-16 in JS array, spreadsheet rows 14-17)
-      for (let i = 13; i <= 16; i++) {
+      // Parse Distribusi Benih using configured rows
+      for (let i = rowConfig.distribusiBenih.startRow - 1; i <= rowConfig.distribusiBenih.endRow - 1; i++) {
         if (rows[i] && rows[i][0] && rows[i][1]) {
           distribusiData.push({ 
             bulan: rows[i][0].trim(), 
