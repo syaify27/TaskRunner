@@ -153,7 +153,7 @@ export function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
       {/* Admin Panel */}
       <div className={`admin-panel fixed top-0 right-0 w-96 h-full bg-card shadow-2xl z-50 border-l border-border ${isOpen ? 'open' : ''}`}
            data-testid="admin-panel">
-        <div className="p-6 h-full flex flex-col">
+        <div className="p-6 h-full flex flex-col overflow-y-auto">
           <div className="flex items-center justify-between mb-6">
             <h3 className="text-lg font-bold text-foreground">Konfigurasi Admin</h3>
             <Button 
