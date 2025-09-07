@@ -1,0 +1,45 @@
+Create a detailed prompt for an AI code generator (such as Grok, ChatGPT, or similar) to build a full-stack website application for a Unit Pelaksana Teknis Pembibitan dan Pembenihan (Technical Implementation Unit for Seedling and Seed Production). The website should dynamically display data fetched from a Google Spreadsheet, where specific cells or ranges are mapped to display elements (e.g., stock of seedlings and seeds, daily production, distributed seeds, etc.). The data should update in real-time or near real-time on the website when the spreadsheet changes, using polling or webhooks if possible.
+The application must include:
+
+Frontend: Built with HTML5, CSS3 (using a modern framework like Tailwind CSS or Bootstrap for responsiveness and attractiveness), and JavaScript (preferably with React.js or Vue.js for interactive components). Include sections like:
+
+Home page with an overview of the unit, mission, and key stats (pulled from Sheets).
+Dashboard page displaying real-time data in tables, charts (using Chart.js or similar), and cards: stock of bibit (seedlings) and benih (seeds), produksi harian (daily production), benih yang sudah disalurkan (distributed seeds), inventory levels, growth metrics, and other relevant agricultural data.
+Agrotourism section: Descriptions of facilities, virtual tours (embed YouTube videos or image galleries), activities, pricing, and benefits. Make it visually appealing with high-quality images, sliders, and animations.
+Ordering section: Form for users to order benih (seeds), with fields for type, quantity, contact info, and submission (integrate with email or a backend endpoint).
+Booking section: Form for agrotourism visits, including date, group size, preferences, and confirmation.
+Additional pages for completeness: About Us (history, team, certifications), Gallery (photos of farms, products, events), News/Updates (blog-like posts pulled from Sheets or a simple CMS), FAQ, Contact Us (map embed via Google Maps, address, phone, social links), Testimonials, and a Blog for tips on planting and agriculture.
+Navigation: Responsive navbar with dropdowns, search bar for products, and footer with links, copyright, and social icons.
+Design: Modern, attractive theme with green/earth tones, icons (Font Awesome), responsive for mobile/desktop, animations (CSS transitions), and accessibility features (ARIA labels).
+Real-time updates: Use JavaScript to fetch data from the backend API periodically (e.g., every 30 seconds) or on page load/refresh.
+
+
+Backend: Built with Node.js and Express.js (or Python with Flask/Django if preferred). Integrate with Google Sheets API for reading and writing data:
+
+API endpoints: GET for fetching spreadsheet data (specific cells/ranges), POST/PUT for updating data via admin dashboard.
+Authentication: Simple admin login (username/password or OAuth with Google) to access the dashboard.
+Handle form submissions from public users (e.g., store orders/bookings in another Sheet or a database like MongoDB/Firebase, and send email notifications via Nodemailer or similar).
+For real-time: Use Google Apps Script web app as a proxy if needed, or set up webhooks with Google Sheets triggers.
+Database: Use Google Sheets as the primary data source, but add a lightweight DB (e.g., SQLite or Firebase) for user-submitted data if Sheets alone isn't sufficient.
+
+
+Admin Dashboard: A protected section (separate route like /admin) with frontend (React/Vue) and backend support:
+
+Forms to edit spreadsheet data directly: Inputs for updating stock, production, etc., which write back to specific cells via Google Sheets API.
+View and manage user orders/bookings: List, approve, export.
+Analytics: Simple charts on data trends.
+Content management: Upload images for gallery, add news posts.
+
+
+
+Additional requirements:
+
+The entire codebase should be provided in a structured format: Separate files for frontend (index.html, app.js, styles.css), backend (server.js, routes), and setup instructions (e.g., npm install, environment variables for Google API keys).
+Security: Basic protections like input validation, CORS, and HTTPS recommendations.
+Deployment: Instructions for hosting on free platforms like Vercel (frontend), Heroku (backend), or Google App Engine.
+Enhancements for attractiveness: Integrate free APIs like weather for the farm location, live chat (Tawk.to embed), SEO meta tags, PWA features, and multilingual support (Indonesian/English).
+Testing: Include sample data and error handling (e.g., if API fails, show fallback message).
+Google Sheets integration: Assume a public or service-account-enabled Sheet; provide placeholders for Sheet ID, API key, and cell ranges (e.g., A1 for stock, B2 for production).
+Make it complete: Ensure the prompt generates runnable code, with comments, and optimizes for performance.
+
+Output the generated code in a zipped structure or as text files in the response. If any tools or libraries are needed, list them with installation commands. use indonesian language in the website
