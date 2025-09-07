@@ -15,6 +15,12 @@ export const configurations = pgTable("configurations", {
   value: text("value").notNull(),
 });
 
+export const websiteContent = pgTable("website_content", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  section: text("section").notNull().unique(), // hero, about, services, contact
+  content: text("content").notNull(), // JSON string containing all content for that section
+});
+
 export const insertUserSchema = createInsertSchema(users).pick({
   username: true,
   password: true,
@@ -23,6 +29,11 @@ export const insertUserSchema = createInsertSchema(users).pick({
 export const insertConfigurationSchema = createInsertSchema(configurations).pick({
   key: true,
   value: true,
+});
+
+export const insertWebsiteContentSchema = createInsertSchema(websiteContent).pick({
+  section: true,
+  content: true,
 });
 
 // Row configuration schema
@@ -70,12 +81,78 @@ export const configurationUpdateSchema = z.object({
   rowConfiguration: rowConfigSchema.optional(),
 });
 
+// Website content schemas
+export const heroContentSchema = z.object({
+  title: z.string().default("UPT Pembibitan"),
+  subtitle: z.string().default("Unit Pelaksana Teknis Pembibitan dan Pembenihan"),
+  description: z.string().default("Menyediakan bibit berkualitas tinggi untuk pertanian berkelanjutan Indonesia."),
+  heroImage: z.string().url().optional(),
+  stats: z.object({
+    varieties: z.string().default("1000+"),
+    experience: z.string().default("50+"),
+    farmers: z.string().default("100K+")
+  }).optional()
+});
+
+export const aboutContentSchema = z.object({
+  title: z.string().default("Tentang UPT Pembibitan"),
+  subtitle: z.string().default("Lembaga terdepan dalam pengembangan bibit dan benih berkualitas"),
+  vision: z.string().default("Menjadi pusat unggulan pembibitan dan pembenihan yang menghasilkan varietas unggul"),
+  mission: z.array(z.string()).default([
+    "Mengembangkan teknologi pembibitan modern dan inovatif",
+    "Menyediakan bibit berkualitas tinggi dan bersertifikat",
+    "Memberikan edukasi dan pelatihan kepada petani",
+    "Mendukung program ketahanan pangan nasional"
+  ]),
+  commitments: z.object({
+    success: z.string().default("95%"),
+    monitoring: z.string().default("24/7"),
+    guarantee: z.string().default("100%")
+  }).optional()
+});
+
+export const servicesContentSchema = z.object({
+  title: z.string().default("Layanan Agrowisata"),
+  subtitle: z.string().default("Rasakan pengalaman menarik belajar pertanian sambil menikmati keindahan alam"),
+  heroImage: z.string().url().optional(),
+  services: z.array(z.object({
+    title: z.string(),
+    description: z.string(),
+    price: z.string(),
+    duration: z.string(),
+    includes: z.array(z.string())
+  })).default([])
+});
+
+export const contactContentSchema = z.object({
+  title: z.string().default("Hubungi Kami"),
+  subtitle: z.string().default("Kami siap membantu Anda dengan layanan terbaik"),
+  address: z.string().default("Jl. Pembibitan Raya No. 123, Kecamatan Pertanian"),
+  phone: z.string().default("(0271) 123-4567"),
+  email: z.string().default("info@uptpembibitan.go.id"),
+  workingHours: z.string().default("Senin - Jumat: 08:00 - 16:00 WIB")
+});
+
+export const websiteContentSchema = z.object({
+  hero: heroContentSchema.optional(),
+  about: aboutContentSchema.optional(),
+  services: servicesContentSchema.optional(),
+  contact: contactContentSchema.optional()
+});
+
 export type InsertUser = z.infer<typeof insertUserSchema>;
 export type User = typeof users.$inferSelect;
 export type InsertConfiguration = z.infer<typeof insertConfigurationSchema>;
 export type Configuration = typeof configurations.$inferSelect;
+export type InsertWebsiteContent = z.infer<typeof insertWebsiteContentSchema>;
+export type WebsiteContent = typeof websiteContent.$inferSelect;
 export type ConfigurationUpdate = z.infer<typeof configurationUpdateSchema>;
 export type RowConfiguration = z.infer<typeof rowConfigSchema>;
+export type HeroContent = z.infer<typeof heroContentSchema>;
+export type AboutContent = z.infer<typeof aboutContentSchema>;
+export type ServicesContent = z.infer<typeof servicesContentSchema>;
+export type ContactContent = z.infer<typeof contactContentSchema>;
+export type WebsiteContentData = z.infer<typeof websiteContentSchema>;
 
 // Dashboard data types
 export interface StokData {
