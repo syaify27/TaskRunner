@@ -25,9 +25,23 @@ export interface DashboardData {
   distribusiData: DistribusiData[];
 }
 
+export interface RowRange {
+  startRow: number;
+  endRow: number;
+  label: string;
+}
+
+export interface RowConfiguration {
+  stokBibit: RowRange;
+  produksiHarian: RowRange;
+  benihTersedia: RowRange;
+  distribusiBenih: RowRange;
+}
+
 export interface AdminConfig {
   sheetUrl: string;
   pollingInterval: number;
+  rowConfiguration: RowConfiguration;
 }
 
 export interface ValidationResult {

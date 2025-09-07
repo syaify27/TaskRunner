@@ -8,7 +8,7 @@ import { Badge } from "@/components/ui/badge";
 import { X, Save, CheckCircle } from "lucide-react";
 import { api } from "../lib/api";
 import { useToast } from "@/hooks/use-toast";
-import type { AdminConfig, ValidationResult } from "../types/dashboard";
+import type { AdminConfig, ValidationResult, RowConfiguration } from "../types/dashboard";
 
 interface AdminPanelProps {
   isOpen: boolean;
@@ -18,7 +18,16 @@ interface AdminPanelProps {
 export function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [password, setPassword] = useState("");
-  const [config, setConfig] = useState<AdminConfig>({ sheetUrl: "", pollingInterval: 30 });
+  const [config, setConfig] = useState<AdminConfig>({ 
+    sheetUrl: "", 
+    pollingInterval: 30,
+    rowConfiguration: {
+      stokBibit: { startRow: 2, endRow: 5, label: "Stok Bibit" },
+      produksiHarian: { startRow: 6, endRow: 9, label: "Produksi Harian" },
+      benihTersedia: { startRow: 10, endRow: 13, label: "Benih Tersedia" },
+      distribusiBenih: { startRow: 14, endRow: 17, label: "Distribusi Benih" }
+    }
+  });
   const [urlStatus, setUrlStatus] = useState<ValidationResult | null>(null);
   const [isValidating, setIsValidating] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
@@ -111,7 +120,8 @@ export function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
     try {
       await api.config.update({
         sheetUrl: config.sheetUrl,
-        pollingInterval: config.pollingInterval
+        pollingInterval: config.pollingInterval,
+        rowConfiguration: config.rowConfiguration
       });
       toast({
         title: "Berhasil",
@@ -248,6 +258,197 @@ export function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
                       className="mt-2"
                       data-testid="input-polling-interval"
                     />
+                  </div>
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardHeader>
+                  <CardTitle>Konfigurasi Baris Data</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-6">
+                  <div className="text-sm text-muted-foreground mb-4">
+                    Tentukan baris mana di spreadsheet yang berisi data untuk setiap kategori. Nomor baris mengacu pada baris spreadsheet (mulai dari 1).
+                  </div>
+                  
+                  {/* Stok Bibit Configuration */}
+                  <div className="space-y-3">
+                    <Label className="text-sm font-semibold text-primary">Stok Bibit</Label>
+                    <div className="grid grid-cols-2 gap-4">
+                      <div>
+                        <Label htmlFor="stok-start" className="text-xs">Baris Mulai</Label>
+                        <Input
+                          id="stok-start"
+                          type="number"
+                          value={config.rowConfiguration.stokBibit.startRow}
+                          onChange={(e) => setConfig({
+                            ...config,
+                            rowConfiguration: {
+                              ...config.rowConfiguration,
+                              stokBibit: { ...config.rowConfiguration.stokBibit, startRow: parseInt(e.target.value) || 1 }
+                            }
+                          })}
+                          min={1}
+                          max={1000}
+                          className="mt-1"
+                          data-testid="input-stok-start-row"
+                        />
+                      </div>
+                      <div>
+                        <Label htmlFor="stok-end" className="text-xs">Baris Selesai</Label>
+                        <Input
+                          id="stok-end"
+                          type="number"
+                          value={config.rowConfiguration.stokBibit.endRow}
+                          onChange={(e) => setConfig({
+                            ...config,
+                            rowConfiguration: {
+                              ...config.rowConfiguration,
+                              stokBibit: { ...config.rowConfiguration.stokBibit, endRow: parseInt(e.target.value) || 1 }
+                            }
+                          })}
+                          min={1}
+                          max={1000}
+                          className="mt-1"
+                          data-testid="input-stok-end-row"
+                        />
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Produksi Harian Configuration */}
+                  <div className="space-y-3">
+                    <Label className="text-sm font-semibold text-primary">Produksi Harian</Label>
+                    <div className="grid grid-cols-2 gap-4">
+                      <div>
+                        <Label htmlFor="produksi-start" className="text-xs">Baris Mulai</Label>
+                        <Input
+                          id="produksi-start"
+                          type="number"
+                          value={config.rowConfiguration.produksiHarian.startRow}
+                          onChange={(e) => setConfig({
+                            ...config,
+                            rowConfiguration: {
+                              ...config.rowConfiguration,
+                              produksiHarian: { ...config.rowConfiguration.produksiHarian, startRow: parseInt(e.target.value) || 1 }
+                            }
+                          })}
+                          min={1}
+                          max={1000}
+                          className="mt-1"
+                          data-testid="input-produksi-start-row"
+                        />
+                      </div>
+                      <div>
+                        <Label htmlFor="produksi-end" className="text-xs">Baris Selesai</Label>
+                        <Input
+                          id="produksi-end"
+                          type="number"
+                          value={config.rowConfiguration.produksiHarian.endRow}
+                          onChange={(e) => setConfig({
+                            ...config,
+                            rowConfiguration: {
+                              ...config.rowConfiguration,
+                              produksiHarian: { ...config.rowConfiguration.produksiHarian, endRow: parseInt(e.target.value) || 1 }
+                            }
+                          })}
+                          min={1}
+                          max={1000}
+                          className="mt-1"
+                          data-testid="input-produksi-end-row"
+                        />
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Benih Tersedia Configuration */}
+                  <div className="space-y-3">
+                    <Label className="text-sm font-semibold text-primary">Benih Tersedia</Label>
+                    <div className="grid grid-cols-2 gap-4">
+                      <div>
+                        <Label htmlFor="benih-start" className="text-xs">Baris Mulai</Label>
+                        <Input
+                          id="benih-start"
+                          type="number"
+                          value={config.rowConfiguration.benihTersedia.startRow}
+                          onChange={(e) => setConfig({
+                            ...config,
+                            rowConfiguration: {
+                              ...config.rowConfiguration,
+                              benihTersedia: { ...config.rowConfiguration.benihTersedia, startRow: parseInt(e.target.value) || 1 }
+                            }
+                          })}
+                          min={1}
+                          max={1000}
+                          className="mt-1"
+                          data-testid="input-benih-start-row"
+                        />
+                      </div>
+                      <div>
+                        <Label htmlFor="benih-end" className="text-xs">Baris Selesai</Label>
+                        <Input
+                          id="benih-end"
+                          type="number"
+                          value={config.rowConfiguration.benihTersedia.endRow}
+                          onChange={(e) => setConfig({
+                            ...config,
+                            rowConfiguration: {
+                              ...config.rowConfiguration,
+                              benihTersedia: { ...config.rowConfiguration.benihTersedia, endRow: parseInt(e.target.value) || 1 }
+                            }
+                          })}
+                          min={1}
+                          max={1000}
+                          className="mt-1"
+                          data-testid="input-benih-end-row"
+                        />
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Distribusi Benih Configuration */}
+                  <div className="space-y-3">
+                    <Label className="text-sm font-semibold text-primary">Distribusi Benih</Label>
+                    <div className="grid grid-cols-2 gap-4">
+                      <div>
+                        <Label htmlFor="distribusi-start" className="text-xs">Baris Mulai</Label>
+                        <Input
+                          id="distribusi-start"
+                          type="number"
+                          value={config.rowConfiguration.distribusiBenih.startRow}
+                          onChange={(e) => setConfig({
+                            ...config,
+                            rowConfiguration: {
+                              ...config.rowConfiguration,
+                              distribusiBenih: { ...config.rowConfiguration.distribusiBenih, startRow: parseInt(e.target.value) || 1 }
+                            }
+                          })}
+                          min={1}
+                          max={1000}
+                          className="mt-1"
+                          data-testid="input-distribusi-start-row"
+                        />
+                      </div>
+                      <div>
+                        <Label htmlFor="distribusi-end" className="text-xs">Baris Selesai</Label>
+                        <Input
+                          id="distribusi-end"
+                          type="number"
+                          value={config.rowConfiguration.distribusiBenih.endRow}
+                          onChange={(e) => setConfig({
+                            ...config,
+                            rowConfiguration: {
+                              ...config.rowConfiguration,
+                              distribusiBenih: { ...config.rowConfiguration.distribusiBenih, endRow: parseInt(e.target.value) || 1 }
+                            }
+                          })}
+                          min={1}
+                          max={1000}
+                          className="mt-1"
+                          data-testid="input-distribusi-end-row"
+                        />
+                      </div>
+                    </div>
                   </div>
                 </CardContent>
               </Card>

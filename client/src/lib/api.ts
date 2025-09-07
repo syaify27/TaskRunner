@@ -1,5 +1,5 @@
 import { apiRequest } from "./queryClient";
-import type { DashboardData, AdminConfig, ValidationResult } from "../types/dashboard";
+import type { DashboardData, AdminConfig, ValidationResult, RowConfiguration } from "../types/dashboard";
 
 export const api = {
   auth: {
@@ -15,7 +15,7 @@ export const api = {
       return response.json();
     },
 
-    update: async (config: Partial<AdminConfig>) => {
+    update: async (config: Partial<AdminConfig & { rowConfiguration?: RowConfiguration }>) => {
       const response = await apiRequest("POST", "/api/admin/config", config);
       return response.json();
     },
