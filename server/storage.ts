@@ -27,6 +27,15 @@ export class MemStorage implements IStorage {
     this.setConfiguration({ key: "adminPassword", value: "admin123" });
     this.setConfiguration({ key: "sheetUrl", value: "" });
     this.setConfiguration({ key: "pollingInterval", value: "30000" });
+    
+    // Initialize default row configuration
+    const defaultRowConfig = JSON.stringify({
+      stokBibit: { startRow: 2, endRow: 5, label: "Stok Bibit" },
+      produksiHarian: { startRow: 6, endRow: 9, label: "Produksi Harian" },
+      benihTersedia: { startRow: 10, endRow: 13, label: "Benih Tersedia" },
+      distribusiBenih: { startRow: 14, endRow: 17, label: "Distribusi Benih" }
+    });
+    this.setConfiguration({ key: "rowConfiguration", value: defaultRowConfig });
   }
 
   async getUser(id: string): Promise<User | undefined> {
