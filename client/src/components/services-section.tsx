@@ -11,10 +11,14 @@ import {
   MapPin,
   Star 
 } from "lucide-react";
+import { useServicesContent } from "../hooks/useWebsiteContent";
 import agrotourismImage from "@assets/generated_images/Indonesian_agrotourism_activities_scene_ee760d16.png";
 
 export function ServicesSection() {
-  const services = [
+  const { servicesContent } = useServicesContent();
+  
+  // Default services while loading or if no content
+  const defaultServices = [
     {
       icon: Camera,
       title: "Tur Kebun Edukasi",
@@ -48,6 +52,23 @@ export function ServicesSection() {
       includes: ["Semua aktivitas", "Makan siang", "Oleh-oleh"]
     }
   ];
+  
+  const defaultContent = {
+    title: "Layanan Agrowisata",
+    subtitle: "Rasakan pengalaman menarik belajar pertanian sambil menikmati keindahan alam di fasilitas pembibitan modern kami.",
+    heroImage: "",
+    services: defaultServices
+  };
+
+  const content = servicesContent || defaultContent;
+  const backgroundImage = content.heroImage || agrotourismImage;
+  
+  // Map services with icons for display
+  const iconMap = [Camera, BookOpen, Utensils, Users];
+  const servicesWithIcons = content.services.map((service, index) => ({
+    ...service,
+    icon: iconMap[index % iconMap.length] || Camera
+  }));
 
   const features = [
     { icon: MapPin, text: "Lokasi strategis dan mudah diakses" },
@@ -61,11 +82,10 @@ export function ServicesSection() {
       <div className="max-w-7xl mx-auto px-6">
         <div className="text-center mb-16">
           <h2 className="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white mb-6">
-            Layanan Agrowisata
+            {content.title}
           </h2>
           <p className="text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto leading-relaxed">
-            Rasakan pengalaman menarik belajar pertanian sambil menikmati keindahan alam 
-            di fasilitas pembibitan modern kami.
+            {content.subtitle}
           </p>
         </div>
 
@@ -73,7 +93,7 @@ export function ServicesSection() {
         <div className="mb-16 relative">
           <div className="relative overflow-hidden rounded-2xl shadow-2xl">
             <img 
-              src={agrotourismImage} 
+              src={backgroundImage} 
               alt="Aktivitas Agrowisata" 
               className="w-full h-96 object-cover"
               data-testid="img-agrotourism-hero"
@@ -100,7 +120,7 @@ export function ServicesSection() {
 
         {/* Services Cards */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-12">
-          {services.map((service, index) => (
+          {servicesWithIcons.map((service, index) => (
             <Card key={index} className="hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
               <CardHeader className="text-center pb-4">
                 <div className="mx-auto mb-4 p-3 bg-green-100 dark:bg-green-900/30 rounded-full w-fit">

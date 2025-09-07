@@ -1,8 +1,11 @@
 import { Button } from "@/components/ui/button";
 import { ArrowDown, Leaf } from "lucide-react";
+import { useHeroContent } from "../hooks/useWebsiteContent";
 import heroImage from "@assets/generated_images/Indonesian_nursery_facility_landscape_583b4905.png";
 
 export function HeroSection() {
+  const { heroContent, isLoading } = useHeroContent();
+  
   const scrollToDashboard = () => {
     const dashboardElement = document.getElementById('dashboard-section');
     if (dashboardElement) {
@@ -10,11 +13,27 @@ export function HeroSection() {
     }
   };
 
+  // Default content while loading or if no content
+  const defaultContent = {
+    title: "UPT Pembibitan",
+    subtitle: "Unit Pelaksana Teknis Pembibitan dan Pembenihan",
+    description: "Menyediakan bibit berkualitas tinggi untuk pertanian berkelanjutan Indonesia. Kami berkomitmen untuk mendukung ketahanan pangan nasional melalui inovasi teknologi pembibitan modern dan ramah lingkungan.",
+    heroImage: "",
+    stats: {
+      varieties: "1000+",
+      experience: "50+", 
+      farmers: "100K+"
+    }
+  };
+
+  const content = heroContent || defaultContent;
+  const backgroundImage = content.heroImage || heroImage;
+
   return (
     <section className="relative min-h-screen flex items-center justify-center bg-gradient-to-br from-green-50 to-blue-50 dark:from-green-950 dark:to-blue-950">
       <div className="absolute inset-0 bg-black/20">
         <img 
-          src={heroImage} 
+          src={backgroundImage} 
           alt="Fasilitas Pembibitan UPT" 
           className="w-full h-full object-cover"
           data-testid="img-hero-background"
@@ -26,18 +45,16 @@ export function HeroSection() {
         <div className="flex items-center justify-center mb-6">
           <Leaf className="text-green-300 mr-4" size={48} />
           <h1 className="text-5xl md:text-7xl font-bold leading-tight">
-            UPT Pembibitan
+            {content.title}
           </h1>
         </div>
         
         <h2 className="text-2xl md:text-3xl font-semibold mb-6 text-green-100">
-          Unit Pelaksana Teknis Pembibitan dan Pembenihan
+          {content.subtitle}
         </h2>
         
         <p className="text-lg md:text-xl mb-8 max-w-3xl mx-auto text-gray-200 leading-relaxed">
-          Menyediakan bibit berkualitas tinggi untuk pertanian berkelanjutan Indonesia. 
-          Kami berkomitmen untuk mendukung ketahanan pangan nasional melalui inovasi 
-          teknologi pembibitan modern dan ramah lingkungan.
+          {content.description}
         </p>
         
         <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-12">
@@ -64,15 +81,15 @@ export function HeroSection() {
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-4xl mx-auto text-center">
           <div className="bg-white/10 backdrop-blur-sm rounded-lg p-6 transform transition-all duration-200 hover:scale-105">
-            <div className="text-3xl font-bold text-green-300 mb-2">1000+</div>
+            <div className="text-3xl font-bold text-green-300 mb-2">{content.stats?.varieties}</div>
             <div className="text-green-100">Jenis Bibit</div>
           </div>
           <div className="bg-white/10 backdrop-blur-sm rounded-lg p-6 transform transition-all duration-200 hover:scale-105">
-            <div className="text-3xl font-bold text-green-300 mb-2">50+</div>
+            <div className="text-3xl font-bold text-green-300 mb-2">{content.stats?.experience}</div>
             <div className="text-green-100">Tahun Pengalaman</div>
           </div>
           <div className="bg-white/10 backdrop-blur-sm rounded-lg p-6 transform transition-all duration-200 hover:scale-105">
-            <div className="text-3xl font-bold text-green-300 mb-2">100K+</div>
+            <div className="text-3xl font-bold text-green-300 mb-2">{content.stats?.farmers}</div>
             <div className="text-green-100">Petani Terlayani</div>
           </div>
         </div>

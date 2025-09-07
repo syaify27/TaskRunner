@@ -1,17 +1,39 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { Leaf, Users, Award, Sprout } from "lucide-react";
+import { useAboutContent } from "../hooks/useWebsiteContent";
 
 export function AboutSection() {
+  const { aboutContent } = useAboutContent();
+  
+  // Default content while loading or if no content
+  const defaultContent = {
+    title: "Tentang UPT Pembibitan",
+    subtitle: "Lembaga terdepan dalam pengembangan bibit dan benih berkualitas untuk mendukung pertanian berkelanjutan dan ketahanan pangan Indonesia.",
+    vision: "Menjadi pusat unggulan pembibitan dan pembenihan yang menghasilkan varietas unggul untuk mendukung pertanian berkelanjutan dan ramah lingkungan di Indonesia.",
+    mission: [
+      "Mengembangkan teknologi pembibitan modern dan inovatif",
+      "Menyediakan bibit berkualitas tinggi dan bersertifikat",
+      "Memberikan edukasi dan pelatihan kepada petani",
+      "Mendukung program ketahanan pangan nasional"
+    ],
+    commitments: {
+      success: "95%",
+      monitoring: "24/7",
+      guarantee: "100%"
+    }
+  };
+
+  const content = aboutContent || defaultContent;
+  
   return (
     <section className="py-20 bg-white dark:bg-gray-900">
       <div className="max-w-7xl mx-auto px-6">
         <div className="text-center mb-16">
           <h2 className="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white mb-6">
-            Tentang UPT Pembibitan
+            {content.title}
           </h2>
           <p className="text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto leading-relaxed">
-            Lembaga terdepan dalam pengembangan bibit dan benih berkualitas untuk mendukung 
-            pertanian berkelanjutan dan ketahanan pangan Indonesia.
+            {content.subtitle}
           </p>
         </div>
 
@@ -24,30 +46,19 @@ export function AboutSection() {
             <div className="mb-8">
               <h4 className="text-xl font-semibold text-green-600 mb-3">Visi</h4>
               <p className="text-gray-600 dark:text-gray-300 leading-relaxed">
-                Menjadi pusat unggulan pembibitan dan pembenihan yang menghasilkan varietas 
-                unggul untuk mendukung pertanian berkelanjutan dan ramah lingkungan di Indonesia.
+                {content.vision}
               </p>
             </div>
 
             <div>
               <h4 className="text-xl font-semibold text-green-600 mb-3">Misi</h4>
               <ul className="space-y-2 text-gray-600 dark:text-gray-300">
-                <li className="flex items-start">
-                  <span className="text-green-500 mr-2 mt-1">•</span>
-                  Mengembangkan teknologi pembibitan modern dan inovatif
-                </li>
-                <li className="flex items-start">
-                  <span className="text-green-500 mr-2 mt-1">•</span>
-                  Menyediakan bibit berkualitas tinggi dan bersertifikat
-                </li>
-                <li className="flex items-start">
-                  <span className="text-green-500 mr-2 mt-1">•</span>
-                  Memberikan edukasi dan pelatihan kepada petani
-                </li>
-                <li className="flex items-start">
-                  <span className="text-green-500 mr-2 mt-1">•</span>
-                  Mendukung program ketahanan pangan nasional
-                </li>
+                {content.mission.map((missionItem, index) => (
+                  <li key={index} className="flex items-start">
+                    <span className="text-green-500 mr-2 mt-1">•</span>
+                    {missionItem}
+                  </li>
+                ))}
               </ul>
             </div>
           </div>
@@ -101,15 +112,15 @@ export function AboutSection() {
           </h3>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             <div className="text-center">
-              <div className="text-4xl font-bold text-green-600 mb-2">95%</div>
+              <div className="text-4xl font-bold text-green-600 mb-2">{content.commitments?.success}</div>
               <div className="text-gray-600 dark:text-gray-300">Tingkat Keberhasilan Tumbuh</div>
             </div>
             <div className="text-center">
-              <div className="text-4xl font-bold text-green-600 mb-2">24/7</div>
+              <div className="text-4xl font-bold text-green-600 mb-2">{content.commitments?.monitoring}</div>
               <div className="text-gray-600 dark:text-gray-300">Monitoring Kualitas</div>
             </div>
             <div className="text-center">
-              <div className="text-4xl font-bold text-green-600 mb-2">100%</div>
+              <div className="text-4xl font-bold text-green-600 mb-2">{content.commitments?.guarantee}</div>
               <div className="text-gray-600 dark:text-gray-300">Jaminan Kualitas</div>
             </div>
           </div>

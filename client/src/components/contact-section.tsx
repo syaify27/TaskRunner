@@ -13,18 +13,32 @@ import {
   Youtube,
   Send
 } from "lucide-react";
+import { useContactContent } from "../hooks/useWebsiteContent";
 
 export function ContactSection() {
+  const { contactContent } = useContactContent();
+  
+  // Default content while loading or if no content
+  const defaultContent = {
+    title: "Hubungi Kami",
+    subtitle: "Kami siap membantu Anda dengan layanan terbaik. Jangan ragu untuk menghubungi tim profesional kami kapan saja.",
+    address: "Jl. Pembibitan Raya No. 123\nKecamatan Pertanian, Kabupaten Subur\nJawa Tengah 50123, Indonesia",
+    phone: "Kantor: (0271) 123-4567\nWhatsApp: +62 812-3456-7890\nFax: (0271) 123-4568",
+    email: "info@uptpembibitan.go.id",
+    workingHours: "Senin - Jumat: 08:00 - 16:00 WIB\nSabtu - Minggu: 08:00 - 17:00 WIB\nHari Libur: Tutup"
+  };
+
+  const content = contactContent || defaultContent;
+  
   return (
     <section className="py-20 bg-white dark:bg-gray-900">
       <div className="max-w-7xl mx-auto px-6">
         <div className="text-center mb-16">
           <h2 className="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white mb-6">
-            Hubungi Kami
+            {content.title}
           </h2>
           <p className="text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto leading-relaxed">
-            Kami siap membantu Anda dengan layanan terbaik. Jangan ragu untuk menghubungi 
-            tim profesional kami kapan saja.
+            {content.subtitle}
           </p>
         </div>
 
@@ -44,9 +58,12 @@ export function ContactSection() {
                   <div>
                     <h4 className="font-semibold text-gray-900 dark:text-white mb-1">Alamat</h4>
                     <p className="text-gray-600 dark:text-gray-300">
-                      Jl. Pembibitan Raya No. 123<br />
-                      Kecamatan Pertanian, Kabupaten Subur<br />
-                      Jawa Tengah 50123, Indonesia
+                      {content.address.split('\n').map((line, index) => (
+                        <span key={index}>
+                          {line}
+                          {index < content.address.split('\n').length - 1 && <br />}
+                        </span>
+                      ))}
                     </p>
                   </div>
                 </div>
@@ -58,9 +75,12 @@ export function ContactSection() {
                   <div>
                     <h4 className="font-semibold text-gray-900 dark:text-white mb-1">Telepon</h4>
                     <p className="text-gray-600 dark:text-gray-300">
-                      Kantor: (0271) 123-4567<br />
-                      WhatsApp: +62 812-3456-7890<br />
-                      Fax: (0271) 123-4568
+                      {content.phone.split('\n').map((line, index) => (
+                        <span key={index}>
+                          {line}
+                          {index < content.phone.split('\n').length - 1 && <br />}
+                        </span>
+                      ))}
                     </p>
                   </div>
                 </div>
@@ -72,9 +92,7 @@ export function ContactSection() {
                   <div>
                     <h4 className="font-semibold text-gray-900 dark:text-white mb-1">Email</h4>
                     <p className="text-gray-600 dark:text-gray-300">
-                      info@uptpembibitan.go.id<br />
-                      agrowisata@uptpembibitan.go.id<br />
-                      admin@uptpembibitan.go.id
+                      {content.email}
                     </p>
                   </div>
                 </div>
@@ -86,9 +104,12 @@ export function ContactSection() {
                   <div>
                     <h4 className="font-semibold text-gray-900 dark:text-white mb-1">Jam Operasional</h4>
                     <p className="text-gray-600 dark:text-gray-300">
-                      Senin - Jumat: 08:00 - 16:00 WIB<br />
-                      Sabtu - Minggu: 08:00 - 17:00 WIB<br />
-                      Hari Libur: Tutup
+                      {content.workingHours.split('\n').map((line, index) => (
+                        <span key={index}>
+                          {line}
+                          {index < content.workingHours.split('\n').length - 1 && <br />}
+                        </span>
+                      ))}
                     </p>
                   </div>
                 </div>
